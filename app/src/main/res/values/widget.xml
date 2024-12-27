@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <color name="widget_label_background">@color/header_1</color>
+  <color name="widget_background">@color/background_1</color>
+
+  <dimen name="widget_corners_radius">28dp</dimen>
+
+  <string name="widget_description">Day counter to or from a date</string>
+  <plurals name="widget_days">
+    <item quantity="one">day</item>
+    <item quantity="other">days</item>
+  </plurals>
+</resources>

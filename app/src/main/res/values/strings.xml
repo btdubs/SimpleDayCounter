@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="app_name">Simple Day Counter</string>
+  <string name="label_title">Label</string>
+  <string name="add_widget">Add Widget</string>
+  <string name="colors_title">Colors (Header/Background)</string>
+</resources>
