@@ -5,6 +5,7 @@ import android.appwidget.AppWidgetManager
 import android.appwidget.AppWidgetProvider
 import android.content.Context
 import android.content.Intent
+import android.content.res.Resources
 import android.widget.RemoteViews
 import java.util.TimeZone
 
@@ -21,21 +22,37 @@ internal fun updateAppWidget(
   val views = RemoteViews(context.packageName, R.layout.widget)
 
   val savedDate = saver.getDate(appWidgetId)
-  val dayCount = daysSince(savedDate, System.currentTimeMillis(), TimeZone.getDefault()).run {
-    check(this <= Integer.MAX_VALUE)
-    toInt()
-  }
+  val dayCount = dayCount(savedDate)
 
+  val resources = context.resources
   views.setTextViewText(R.id.widget_label, saver.getLabel(appWidgetId))
-  views.setTextViewText(R.id.widget_counter, dayCount.toString())
-  views.setTextViewText(R.id.widget_days, context.resources.getQuantityString(
-    R.plurals.widget_days,
-    if (dayCount == -1) 1 else dayCount // todo: -1 day or days?
-  ))
+  views.setTextViewText(R.id.widget_counter, getFormattedDayCount(resources, dayCount))
+  views.setTextViewText(R.id.widget_days, getFormattedDays(resources, dayCount))
   views.setInt(R.id.widget_label, "setBackgroundColor", saver.getHeaderColor(appWidgetId))
   views.setInt(android.R.id.background, "setBackgroundColor", saver.getBackgroundColor(appWidgetId))
 
   appWidgetManager.updateAppWidget(appWidgetId, views)
+}
+
+internal fun dayCount(savedDate: Long): Long {
+  return daysSince(savedDate, System.currentTimeMillis(), TimeZone.getDefault())
+}
+
+internal fun getFormattedDayCount(resources: Resources, dayCount: Long): String {
+  return resources.getString(R.string.widget_count, dayCount)
+}
+
+internal fun getFormattedDays(resources: Resources, dayCount: Long): String {
+  var dayCountForFormatting = dayCount.coerceIn(
+    Integer.MIN_VALUE.toLong(), Integer.MAX_VALUE.toLong()
+  ).toInt()
+  if (dayCountForFormatting == -1) {
+    dayCountForFormatting = 1 // -1 days, not -1 day. Android plurals don't let us special-case -1.
+  }
+  return resources.getQuantityString(
+    R.plurals.widget_days,
+    dayCountForFormatting
+  )
 }
 
 class SimpleDayCounterAppWidgetProvider : AppWidgetProvider() {
