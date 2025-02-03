@@ -8,7 +8,7 @@ private val utcCalendar = Calendar.getInstance(TimeZone.getTimeZone("UTC"))
 internal fun daysSince(
   dateMidnightUtcMillis: Long,
   nowMillis: Long,
-  currentTimeZone: TimeZone,
+  currentTimeZone: TimeZone
 ): Long {
   require(dateMidnightUtcMillis % 86_400_000L == 0L)
   val offsetMillis = currentTimeZone.getOffset(nowMillis)
