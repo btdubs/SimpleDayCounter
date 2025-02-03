@@ -18,7 +18,6 @@ internal fun updateAppWidget(
     return // We are still in the initial configuration.
   }
 
-  // Construct the RemoteViews object
   val views = RemoteViews(context.packageName, R.layout.widget)
 
   val savedDate = saver.getDate(appWidgetId)
@@ -36,7 +35,6 @@ internal fun updateAppWidget(
   views.setInt(R.id.widget_label, "setBackgroundColor", saver.getHeaderColor(appWidgetId))
   views.setInt(android.R.id.background, "setBackgroundColor", saver.getBackgroundColor(appWidgetId))
 
-  // Instruct the widget manager to update the widget
   appWidgetManager.updateAppWidget(appWidgetId, views)
 }
 
