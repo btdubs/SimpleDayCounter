@@ -40,12 +40,13 @@ class DayCounterWidgetConfigureActivity : Activity() {
     setContentView(R.layout.activity_configuration)
     val datePicker = findViewById<DatePicker>(R.id.configure_date_picker)
     val label = findViewById<EditText>(R.id.configure_label)
+    val previewLabel = findViewById<TextView>(R.id.widget_label)
     label.addTextChangedListener(object : TextWatcher {
-      override fun beforeTextChanged(charSequence: CharSequence?, start: Int, before: Int, count: Int) {}
-      override fun onTextChanged(charSequence: CharSequence?, start: Int, before: Int, count: Int) {
-        updateWidgetPreviewLabel(charSequence.toString())
+      override fun beforeTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {}
+      override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {}
+      override fun afterTextChanged(editable: Editable) {
+        previewLabel.text = editable.toString()
       }
-      override fun afterTextChanged(editable: Editable?) {}
     })
     val addWidgetButton = findViewById<Button>(R.id.configure_add)
     val headerColorLinearLayoutView = findViewById<LinearLayout>(R.id.header_color_circle_container)
@@ -133,11 +134,6 @@ class DayCounterWidgetConfigureActivity : Activity() {
 
   private fun DatePicker.dateMidnightUtcMillis(): Long {
     return dateMidnightUtcMillis(dayOfMonth, month, year)
-  }
-
-  private fun updateWidgetPreviewLabel(label: String) {
-    val previewLabel = findViewById<TextView>(R.id.widget_label)
-    previewLabel.text = label
   }
 
   private fun updateWidgetPreviewCounter(days: Int) {
