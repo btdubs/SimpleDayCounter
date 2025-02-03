@@ -78,26 +78,18 @@ class DayCounterWidgetConfigureActivity : Activity() {
       "#8BC34A",
       "#FFA726"
     )
-    val backgroundColorLinearLayoutView = findViewById<LinearLayout>(R.id.background_color_circle_container)
+    val backgroundColorLinearLayoutView = findViewById<LinearLayout>(
+      R.id.background_color_circle_container
+    )
     backgroundColors.forEach { colorHex ->
       val color = Color.parseColor(colorHex)
       addColorCircle(color, backgroundColorLinearLayoutView, true)
     }
 
-    datePicker.setOnDateChangedListener(object : OnDateChangedListener {
-      override fun onDateChanged(
-        view: DatePicker,
-        year: Int,
-        monthOfYear: Int,
-        dayOfMonth: Int,
-      ) {
-        val dayCount = daysSince(datePicker.dateMidnightUtcMillis(), System.currentTimeMillis(), TimeZone.getDefault()).run {
-          check(this <= Integer.MAX_VALUE)
-          toInt()
-        }
-        updateWidgetPreviewCounter(dayCount)
-      }
-    })
+    datePicker.setOnDateChangedListener { _, year, monthOfYear, dayOfMonth ->
+      val dayCount = dayCount(dateMidnightUtcMillis(dayOfMonth, monthOfYear, year))
+      updateWidgetPreviewCounter(dayCount)
+    }
 
     if (widgetDataSaver.isWidget(appWidgetId)) {
       dayMonthYear(widgetDataSaver.getDate(appWidgetId)) { dayOfMonth, month, year ->
@@ -116,7 +108,7 @@ class DayCounterWidgetConfigureActivity : Activity() {
     addWidgetButton.setOnClickListener {
       widgetDataSaver.save(
         appWidgetId,
-        datePicker.dateMidnightUtcMillis(),
+        dateMidnightUtcMillis(datePicker.dayOfMonth, datePicker.month, datePicker.year),
         label.text.toString(),
         selectedHeaderColor,
         selectedBackgroundColor
@@ -132,15 +124,11 @@ class DayCounterWidgetConfigureActivity : Activity() {
     }
   }
 
-  private fun DatePicker.dateMidnightUtcMillis(): Long {
-    return dateMidnightUtcMillis(dayOfMonth, month, year)
-  }
-
-  private fun updateWidgetPreviewCounter(days: Int) {
+  private fun updateWidgetPreviewCounter(days: Long) {
     val previewCounter = findViewById<TextView>(R.id.widget_counter)
-    previewCounter.text = days.toString()
+    previewCounter.text = getFormattedDayCount(resources, days)
     val previewDaysLabel = findViewById<TextView>(R.id.widget_days)
-    previewDaysLabel.text = resources.getQuantityString(R.plurals.widget_days, days)
+    previewDaysLabel.text = getFormattedDays(resources, days)
   }
 
   private fun updateWidgetPreviewColors(headerColor: Int, backgroundColor: Int) {
