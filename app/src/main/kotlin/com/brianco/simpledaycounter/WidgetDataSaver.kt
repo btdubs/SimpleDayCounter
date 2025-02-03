@@ -34,22 +34,6 @@ internal class WidgetDataSaver(private val sharedPreferences: SharedPreferences)
     return sharedPreferences.contains("$appWidgetId-date")
   }
 
-  fun hasDate(appWidgetId: Int): Boolean {
-    return sharedPreferences.contains("$appWidgetId-date")
-  }
-
-  fun hasLabel(appWidgetId: Int): Boolean {
-    return sharedPreferences.contains("$appWidgetId-label")
-  }
-
-  fun hasHeaderColor(appWidgetId: Int): Boolean {
-    return sharedPreferences.contains("$appWidgetId-headerColor")
-  }
-
-  fun hasBackgroundColor(appWidgetId: Int): Boolean {
-    return sharedPreferences.contains("$appWidgetId-backgroundColor")
-  }
-
   fun getDate(appWidgetId: Int): Long {
     val date = sharedPreferences.getLong("$appWidgetId-date", -1L)
     check(date != -1L)
