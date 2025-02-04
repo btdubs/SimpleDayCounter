@@ -53,8 +53,9 @@ internal class SinceOrUntilOptionsController(
 
   fun setSelectedColor(@ColorInt selectedColor: Int) {
     sinceOrUntilSelectedBackground.paint.color = selectedColor
-    sinceOrUntilSelectedBackground.invalidateSelf()
     sinceOrUntilUnselectedBackground.setColor(ColorStateList.valueOf(selectedColor))
+    sinceOption.invalidate()
+    untilOption.invalidate()
   }
 
   private fun selectOption(sinceSelected: Boolean) {
