@@ -2,7 +2,7 @@
 <resources>
   <color name="widget_text_color">#EFEFEF</color>
 
-  <dimen name="widget_corners_radius">28dp</dimen>
+  <dimen name="widget_corners_radius">0dp</dimen>
 
   <string name="widget_description">Day counter to or from a date</string>
   <string name="widget_count">%1$d</string>
