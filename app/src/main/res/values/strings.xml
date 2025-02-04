@@ -4,4 +4,5 @@
   <string name="label_title">Label</string>
   <string name="add_widget">Add Widget</string>
   <string name="colors_title">Colors (Header/Background)</string>
+  <string name="pin_widget_not_supported">Add a Simple Day Counter widget from your home screen widget list</string>
 </resources>
