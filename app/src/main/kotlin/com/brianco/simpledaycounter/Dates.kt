@@ -13,7 +13,7 @@ internal fun daysSince(
   require(dateMidnightUtcMillis % 86_400_000L == 0L)
   val offsetMillis = currentTimeZone.getOffset(nowMillis)
   val todayMidnightUtcMillis = utcCalendar.apply {
-    timeInMillis = nowMillis - offsetMillis
+    timeInMillis = nowMillis + offsetMillis
     set(Calendar.HOUR_OF_DAY, 0)
     set(Calendar.MINUTE, 0)
     set(Calendar.SECOND, 0)
