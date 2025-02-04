@@ -57,6 +57,8 @@ class DayCounterWidgetConfigureActivity : Activity() {
     val backgroundColorContainer = findViewById<ViewGroup>(R.id.background_color_circle_container)
     val addWidgetButton = findViewById<Button>(R.id.configure_add)
 
+    val isExistingWidget = widgetDataSaver.isWidget(appWidgetId)
+
     val headerColors = listOf(
       R.color.header_1,
       R.color.header_2,
@@ -80,6 +82,8 @@ class DayCounterWidgetConfigureActivity : Activity() {
       addColorCircle(getColor(backgroundColors[i]), backgroundColorContainer, true)
     }
 
+    addWidgetButton.setText(if (isExistingWidget) R.string.update_widget else R.string.add_widget)
+
     label.addTextChangedListener(object : TextWatcher {
       override fun beforeTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {}
       override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {}
@@ -97,7 +101,7 @@ class DayCounterWidgetConfigureActivity : Activity() {
       // restores the DatePicker state.
       // The label EditText's TextWatcher will set the previewLabel TextView text when Android
       // restores the label EditText's text.
-    } else if (widgetDataSaver.isWidget(appWidgetId)) {
+    } else if (isExistingWidget) {
       selectedHeaderColor = widgetDataSaver.getHeaderColor(appWidgetId)
       selectedBackgroundColor = widgetDataSaver.getBackgroundColor(appWidgetId)
       sinceSelected = widgetDataSaver.getSinceOrUntil(appWidgetId)
