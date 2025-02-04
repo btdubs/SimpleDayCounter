@@ -2,7 +2,6 @@ package com.brianco.simpledaycounter
 
 import android.app.Activity
 import android.appwidget.AppWidgetManager
-import android.graphics.Color
 import android.graphics.drawable.ShapeDrawable
 import android.graphics.drawable.shapes.OvalShape
 import android.os.Bundle
@@ -10,10 +9,10 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import android.widget.Button
 import android.widget.DatePicker
 import android.widget.EditText
-import android.widget.LinearLayout
 import android.widget.TextView
 
 class DayCounterWidgetConfigureActivity : Activity() {
@@ -51,43 +50,31 @@ class DayCounterWidgetConfigureActivity : Activity() {
     previewCounter = previewWidgetContainer.findViewById(R.id.widget_counter)
     previewDays = previewWidgetContainer.findViewById(R.id.widget_days)
     val label = findViewById<EditText>(R.id.configure_label)
-    val headerColorLinearLayoutView = findViewById<LinearLayout>(R.id.header_color_circle_container)
-    val backgroundColorLinearLayoutView = findViewById<LinearLayout>(
-      R.id.background_color_circle_container
-    )
+    val headerColorContainer = findViewById<ViewGroup>(R.id.header_color_circle_container)
+    val backgroundColorContainer = findViewById<ViewGroup>(R.id.background_color_circle_container)
     val addWidgetButton = findViewById<Button>(R.id.configure_add)
 
-    // val headerColors = listOf(
-    //   R.color.header_1,
-    //   R.color.header_2,
-    //   R.color.header_3,
-    //   R.color.header_4,
-    //   R.color.header_5
-    // )
     val headerColors = listOf(
-      "#01579B",
-      "#006064",
-      "#004D40",
-      "#1B5E20",
-      "#33691E",
-      "#EF6C00"
+      R.color.header_1,
+      R.color.header_2,
+      R.color.header_3,
+      R.color.header_4,
+      R.color.header_5,
+      R.color.header_6
     )
-    headerColors.forEach { colorHex ->
-      val color = Color.parseColor(colorHex)
-      addColorCircle(color, headerColorLinearLayoutView, false)
-    }
-
     val backgroundColors = listOf(
-      "#03A9F4",
-      "#00BCD4",
-      "#009688",
-      "#4CAF50",
-      "#8BC34A",
-      "#FFA726"
+      R.color.background_1,
+      R.color.background_2,
+      R.color.background_3,
+      R.color.background_4,
+      R.color.background_5,
+      R.color.background_6
     )
-    backgroundColors.forEach { colorHex ->
-      val color = Color.parseColor(colorHex)
-      addColorCircle(color, backgroundColorLinearLayoutView, true)
+    for (i in headerColors.indices) {
+      addColorCircle(getColor(headerColors[i]), headerColorContainer, false)
+    }
+    for (i in backgroundColors.indices) {
+      addColorCircle(getColor(backgroundColors[i]), backgroundColorContainer, true)
     }
 
     datePicker.setOnDateChangedListener { _, year, monthOfYear, dayOfMonth ->
@@ -119,8 +106,8 @@ class DayCounterWidgetConfigureActivity : Activity() {
       selectedHeaderColor = widgetDataSaver.getHeaderColor(appWidgetId)
       selectedBackgroundColor = widgetDataSaver.getBackgroundColor(appWidgetId)
     } else {
-      selectedHeaderColor = Color.parseColor(headerColors[0])
-      selectedBackgroundColor = Color.parseColor(backgroundColors[0])
+      selectedHeaderColor = getColor(headerColors[0])
+      selectedBackgroundColor = getColor(backgroundColors[0])
       updateWidgetPreviewDayCounter()
     }
     updateWidgetPreviewColors(selectedHeaderColor, selectedBackgroundColor)
@@ -160,7 +147,7 @@ class DayCounterWidgetConfigureActivity : Activity() {
     previewDays.text = getFormattedDays(resources, dayCount)
   }
 
-  private fun addColorCircle(color: Int, layout: LinearLayout, isBackground: Boolean) {
+  private fun addColorCircle(color: Int, layout: ViewGroup, isBackground: Boolean) {
     val layoutInflater = LayoutInflater.from(this)
     val colorView = layoutInflater.inflate(R.layout.color, layout, false)
     colorView.background = ShapeDrawable(OvalShape()).apply {
