@@ -1,11 +1,14 @@
 package com.brianco.simpledaycounter
 
+import android.app.PendingIntent
 import android.appwidget.AppWidgetManager
 import android.appwidget.AppWidgetProvider
 import android.content.ComponentName
+import android.content.ContentUris
 import android.content.Context
 import android.content.Intent
 import android.content.res.Resources
+import android.provider.CalendarContract
 import android.widget.RemoteViews
 import java.util.TimeZone
 
@@ -23,7 +26,9 @@ internal fun updateAppWidget(
 
   val savedDate = saver.getDate(appWidgetId)
   val sinceSelected = saver.getSinceOrUntil(appWidgetId)
-  val dayCount = dayCount(savedDate, sinceSelected)
+  val nowMillis = System.currentTimeMillis()
+  val currentTimeZone = TimeZone.getDefault()
+  val dayCount = dayCount(savedDate, sinceSelected, nowMillis, currentTimeZone)
 
   val resources = context.resources
   views.setTextViewText(R.id.widget_label, saver.getLabel(appWidgetId))
@@ -32,11 +37,25 @@ internal fun updateAppWidget(
   views.setInt(R.id.widget_label, "setBackgroundColor", saver.getHeaderColor(appWidgetId))
   views.setInt(android.R.id.background, "setBackgroundColor", saver.getBackgroundColor(appWidgetId))
 
+  val pendingIntent =
+    PendingIntent.getActivity(
+      context,
+      0,
+      calendarIntent(savedDate, nowMillis, currentTimeZone),
+      PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+    )
+  views.setOnClickPendingIntent(android.R.id.background, pendingIntent)
+
   appWidgetManager.updateAppWidget(appWidgetId, views)
 }
 
-internal fun dayCount(savedDate: Long, sinceSelected: Boolean): Long {
-  val daysSince = daysSince(savedDate, System.currentTimeMillis(), TimeZone.getDefault())
+internal fun dayCount(
+  savedDate: Long,
+  sinceSelected: Boolean,
+  nowMillis: Long,
+  currentTimeZone: TimeZone
+): Long {
+  val daysSince = daysSince(savedDate, nowMillis, currentTimeZone)
   return if (sinceSelected) {
     daysSince + 1
   } else {
@@ -59,6 +78,19 @@ internal fun getFormattedDays(resources: Resources, dayCount: Long): String {
     R.plurals.widget_days,
     dayCountForFormatting
   )
+}
+
+private fun calendarIntent(
+  dateMidnightUtcMillis: Long,
+  nowMillis: Long,
+  currentTimeZone: TimeZone
+): Intent {
+  // The calendar app will add the time zone offset to go to the day we selected.
+  val offsetMillis = currentTimeZone.getOffset(nowMillis)
+  val startMillis = dateMidnightUtcMillis - offsetMillis
+  val builder = CalendarContract.CONTENT_URI.buildUpon().appendPath("time")
+  ContentUris.appendId(builder, startMillis)
+  return Intent(Intent.ACTION_VIEW, builder.build())
 }
 
 class SimpleDayCounterAppWidgetProvider : AppWidgetProvider() {
