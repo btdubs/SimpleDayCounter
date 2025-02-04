@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
   <string name="app_name">Simple Day Counter</string>
+  <string name="option_since">Since</string>
+  <string name="option_or">or</string>
+  <string name="option_until">Until</string>
   <string name="configure_label_hint">Label</string>
   <string name="label">Label</string>
   <string name="add_widget">Add Widget</string>

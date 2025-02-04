@@ -3,17 +3,26 @@ package com.brianco.simpledaycounter
 import android.content.SharedPreferences
 
 internal class WidgetDataSaver(private val sharedPreferences: SharedPreferences) {
-  fun save(appWidgetId: Int, date: Long, label: String, headerColor: Int, backgroundColor: Int) {
+  fun save(
+    appWidgetId: Int,
+    date: Long,
+    label: String,
+    headerColor: Int,
+    backgroundColor: Int,
+    sinceOrUntil: Boolean
+  ) {
     require(date >= 0L)
     val dateKey = "$appWidgetId-date"
     val labelKey = "$appWidgetId-label"
     val headerColorKey = "$appWidgetId-headerColor"
     val backgroundColorKey = "$appWidgetId-backgroundColor"
+    val sinceOrUntilKey = "$appWidgetId-sinceOrUntil"
     sharedPreferences.edit()
       .putLong(dateKey, date)
       .putString(labelKey, label)
       .putInt(headerColorKey, headerColor)
       .putInt(backgroundColorKey, backgroundColor)
+      .putBoolean(sinceOrUntilKey, sinceOrUntil)
       .apply()
   }
 
@@ -22,11 +31,13 @@ internal class WidgetDataSaver(private val sharedPreferences: SharedPreferences)
     val labelKey = "$appWidgetId-label"
     val headerColorKey = "$appWidgetId-headerColor"
     val backgroundColorKey = "$appWidgetId-backgroundColor"
+    val sinceOrUntilKey = "$appWidgetId-sinceOrUntil"
     sharedPreferences.edit()
       .remove(dateKey)
       .remove(labelKey)
       .remove(headerColorKey)
       .remove(backgroundColorKey)
+      .remove(sinceOrUntilKey)
       .apply()
   }
 
@@ -54,5 +65,10 @@ internal class WidgetDataSaver(private val sharedPreferences: SharedPreferences)
   fun getBackgroundColor(appWidgetId: Int): Int {
     val color = sharedPreferences.getInt("$appWidgetId-backgroundColor", 0)
     return color
+  }
+
+  fun getSinceOrUntil(appWidgetId: Int): Boolean {
+    val sinceOrUntil = sharedPreferences.getBoolean("$appWidgetId-sinceOrUntil", true)
+    return sinceOrUntil
   }
 }
