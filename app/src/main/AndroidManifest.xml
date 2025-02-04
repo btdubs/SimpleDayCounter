@@ -13,12 +13,27 @@
       tools:targetApi="33">
     <activity
         android:name=".DayCounterWidgetConfigureActivity"
-        android:windowSoftInputMode="adjustPan"
-        android:exported="false">
+        android:exported="false"
+        android:windowSoftInputMode="adjustPan">
       <intent-filter>
         <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE" />
       </intent-filter>
     </activity>
+
+    <activity
+        android:name=".InfoActivity"
+        android:excludeFromRecents="true"
+        android:exported="true"
+        android:theme="@android:style/Theme.NoDisplay">
+      <intent-filter>
+        <action android:name="android.intent.action.MAIN" />
+        <category android:name="android.intent.category.INFO" />
+      </intent-filter>
+    </activity>
+
+    <receiver
+        android:name=".WidgetPinnedReceiver"
+        android:exported="false" />
 
     <receiver
         android:name=".SimpleDayCounterAppWidgetProvider"
