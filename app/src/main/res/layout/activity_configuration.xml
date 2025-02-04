@@ -2,22 +2,25 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
+
   <LinearLayout
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
       android:orientation="vertical"
-      android:fitsSystemWindows="true" >
+      android:fitsSystemWindows="true">
+
     <FrameLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center">
+
       <DatePicker
           android:id="@+id/configure_date_picker"
           android:layout_width="match_parent"
           android:layout_height="wrap_content"
-          android:gravity="center"
-          />
+          android:gravity="center" />
     </FrameLayout>
+
     <FrameLayout
         android:id="@+id/widget_preview_container"
         android:layout_width="77dp"
@@ -28,10 +31,12 @@
         android:clipToPadding="true"
         android:clipToOutline="true"
         android:gravity="center">
+
       <include
           android:id="@+id/widget_preview"
           layout="@layout/widget" />
     </FrameLayout>
+
     <EditText
         android:id="@+id/configure_label"
         android:layout_width="match_parent"
@@ -39,53 +44,56 @@
         android:hint="@string/label_title"
         android:autofillHints=""
         android:inputType="text" />
+
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/label_title"
-        android:paddingBottom="10dp"
-        />
+        android:paddingBottom="10dp" />
+
     <HorizontalScrollView
         android:id="@+id/header_color_scroll_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="3dp" >
-        <LinearLayout
-            android:id="@+id/header_color_circle_container"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center_vertical">
-        </LinearLayout>
+        android:padding="3dp">
+
+      <LinearLayout
+          android:id="@+id/header_color_circle_container"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:orientation="horizontal"
+          android:gravity="center_vertical"></LinearLayout>
     </HorizontalScrollView>
+
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:background="@color/divider_bar" />
+
     <HorizontalScrollView
         android:id="@+id/background_color_scroll_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="3dp" >
+        android:padding="3dp">
+
       <LinearLayout
           android:id="@+id/background_color_circle_container"
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
           android:orientation="horizontal"
-          android:gravity="center_vertical">
-      </LinearLayout>
+          android:gravity="center_vertical"></LinearLayout>
     </HorizontalScrollView>
+
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/colors_title"
-        />
+        android:text="@string/colors_title" />
+
     <Button
         android:id="@+id/configure_add"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/add_widget"
-        android:layout_gravity="end"
-        />
+        android:layout_gravity="end" />
   </LinearLayout>
 </ScrollView>
