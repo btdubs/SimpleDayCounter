@@ -35,7 +35,7 @@ internal fun updateAppWidget(
 }
 
 internal fun dayCount(savedDate: Long): Long {
-  return daysSince(savedDate, System.currentTimeMillis(), TimeZone.getDefault())
+  return daysSince(savedDate, System.currentTimeMillis(), TimeZone.getDefault()) + 1
 }
 
 internal fun getFormattedDayCount(resources: Resources, dayCount: Long): String {
