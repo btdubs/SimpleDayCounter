@@ -6,6 +6,8 @@
 
   <string name="widget_description">Day counter to or from a date</string>
   <string name="widget_count">%1$d</string>
+  <string name="widget_counter_preview">1</string>
+  <string name="widget_days_preview">day</string>
   <plurals name="widget_days">
     <item quantity="one">day</item>
     <item quantity="other">days</item>

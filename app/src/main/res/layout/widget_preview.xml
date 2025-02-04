@@ -1,9 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@android:id/background"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/background_1">
+    android:background="@drawable/widget_background_preview"
+    android:clipToOutline="true"
+    tools:ignore="UnusedAttribute"> <!-- We only use rounded corners on 31+. -->
 
   <TextView
       android:id="@+id/widget_label"
