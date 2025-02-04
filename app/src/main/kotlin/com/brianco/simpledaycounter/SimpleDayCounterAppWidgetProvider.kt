@@ -53,7 +53,7 @@ internal fun getFormattedDays(resources: Resources, dayCount: Long): String {
     Integer.MIN_VALUE.toLong(), Integer.MAX_VALUE.toLong()
   ).toInt()
   if (dayCountForFormatting == -1) {
-    dayCountForFormatting = 1 // -1 days, not -1 day. Android plurals don't let us special-case -1.
+    dayCountForFormatting = 1 // -1 day, not -1 days. Android plurals don't let us special-case -1.
   }
   return resources.getQuantityString(
     R.plurals.widget_days,
