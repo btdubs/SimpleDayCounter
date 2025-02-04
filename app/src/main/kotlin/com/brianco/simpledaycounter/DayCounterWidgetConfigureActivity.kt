@@ -14,6 +14,7 @@ import android.widget.Button
 import android.widget.DatePicker
 import android.widget.EditText
 import android.widget.TextView
+import java.util.TimeZone
 
 class DayCounterWidgetConfigureActivity : Activity() {
   private val selectedHeaderColorSavedStateKey =
@@ -182,7 +183,12 @@ class DayCounterWidgetConfigureActivity : Activity() {
     year: Int,
     sinceSelected: Boolean
   ) {
-    val dayCount = dayCount(dateMidnightUtcMillis(dayOfMonth, month, year), sinceSelected)
+    val dayCount = dayCount(
+      dateMidnightUtcMillis(dayOfMonth, month, year),
+      sinceSelected,
+      System.currentTimeMillis(),
+      TimeZone.getDefault()
+    )
     val resources = resources
     previewCounter.text = getFormattedDayCount(resources, dayCount)
     previewDays.text = getFormattedDays(resources, dayCount)
