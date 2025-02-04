@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-  <color name="widget_label_background">@color/header_1</color>
-  <color name="widget_background">@color/background_1</color>
+  <color name="widget_text_color">#EFEFEF</color>
 
   <dimen name="widget_corners_radius">28dp</dimen>
 
