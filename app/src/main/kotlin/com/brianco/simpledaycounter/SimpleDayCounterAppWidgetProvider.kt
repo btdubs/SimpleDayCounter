@@ -22,7 +22,8 @@ internal fun updateAppWidget(
   val views = RemoteViews(context.packageName, R.layout.widget)
 
   val savedDate = saver.getDate(appWidgetId)
-  val dayCount = dayCount(savedDate)
+  val sinceSelected = saver.getSinceOrUntil(appWidgetId)
+  val dayCount = dayCount(savedDate, sinceSelected)
 
   val resources = context.resources
   views.setTextViewText(R.id.widget_label, saver.getLabel(appWidgetId))
@@ -34,8 +35,13 @@ internal fun updateAppWidget(
   appWidgetManager.updateAppWidget(appWidgetId, views)
 }
 
-internal fun dayCount(savedDate: Long): Long {
-  return daysSince(savedDate, System.currentTimeMillis(), TimeZone.getDefault()) + 1
+internal fun dayCount(savedDate: Long, sinceSelected: Boolean): Long {
+  val daysSince = daysSince(savedDate, System.currentTimeMillis(), TimeZone.getDefault())
+  return if (sinceSelected) {
+    daysSince + 1
+  } else {
+    -daysSince
+  }
 }
 
 internal fun getFormattedDayCount(resources: Resources, dayCount: Long): String {
