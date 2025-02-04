@@ -89,17 +89,7 @@ android {
 
 dependencies {
   implementation deps.material
-  implementation deps.androidx.activity
   implementation deps.androidx.annotations
-  implementation deps.androidx.appcompat
-  implementation deps.androidx.collection
-  implementation deps.androidx.core
-  implementation deps.androidx.fragment
-  implementation deps.androidx.lifecycleLivedataCore
-  implementation deps.androidx.lifecycleRuntime
-  implementation deps.androidx.lifecycleViewmodel
-  implementation deps.androidx.preference
-  implementation deps.androidx.savedstate
   implementation deps.kotlin.stdlibJdk8
 
   internalImplementation deps.diskcrashreporter
