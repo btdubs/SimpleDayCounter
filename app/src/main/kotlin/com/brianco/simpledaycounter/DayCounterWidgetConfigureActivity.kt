@@ -80,10 +80,6 @@ class DayCounterWidgetConfigureActivity : Activity() {
       addColorCircle(getColor(backgroundColors[i]), backgroundColorContainer, true)
     }
 
-    datePicker.setOnDateChangedListener { _, year, monthOfYear, dayOfMonth ->
-      updateWidgetPreviewDayCounter(dayOfMonth, monthOfYear, year)
-    }
-
     label.addTextChangedListener(object : TextWatcher {
       override fun beforeTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {}
       override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {}
@@ -94,28 +90,33 @@ class DayCounterWidgetConfigureActivity : Activity() {
 
     val sinceSelected: Boolean
     if (savedInstanceState != null) {
+      selectedHeaderColor = savedInstanceState.getInt(selectedHeaderColorSavedStateKey)
+      selectedBackgroundColor = savedInstanceState.getInt(selectedBackgroundColorSavedStateKey)
+      sinceSelected = savedInstanceState.getBoolean(sinceOrUntilSavedStateKey)
       // onRestoreInstanceState will set the previewCounter and previewDays texts after Android
       // restores the DatePicker state.
       // The label EditText's TextWatcher will set the previewLabel TextView text when Android
       // restores the label EditText's text.
-      selectedHeaderColor = savedInstanceState.getInt(selectedHeaderColorSavedStateKey)
-      selectedBackgroundColor = savedInstanceState.getInt(selectedBackgroundColorSavedStateKey)
-      sinceSelected = savedInstanceState.getBoolean(sinceOrUntilSavedStateKey)
     } else if (widgetDataSaver.isWidget(appWidgetId)) {
-      dayMonthYear(widgetDataSaver.getDate(appWidgetId)) { dayOfMonth, month, year ->
-        datePicker.updateDate(year, month, dayOfMonth)
-      }
-      // The DatePicker change listener sets the previewCounter and previewDays texts.
-      label.setText(widgetDataSaver.getLabel(appWidgetId))
-      // The label EditText's TextWatcher sets the previewLabel TextView text.
       selectedHeaderColor = widgetDataSaver.getHeaderColor(appWidgetId)
       selectedBackgroundColor = widgetDataSaver.getBackgroundColor(appWidgetId)
       sinceSelected = widgetDataSaver.getSinceOrUntil(appWidgetId)
+      dayMonthYear(widgetDataSaver.getDate(appWidgetId)) { dayOfMonth, month, year ->
+        datePicker.updateDate(year, month, dayOfMonth)
+        updateWidgetPreviewDayCounter(
+          dayOfMonth,
+          month,
+          year,
+          sinceSelected
+        )
+      }
+      label.setText(widgetDataSaver.getLabel(appWidgetId))
+      // The label EditText's TextWatcher sets the previewLabel TextView text.
     } else {
       selectedHeaderColor = getColor(headerColors[0])
       selectedBackgroundColor = getColor(backgroundColors[0])
       sinceSelected = true
-      updateWidgetPreviewDayCounter()
+      updateWidgetPreviewDayCounter(true)
     }
 
     previewLabel.setBackgroundColor(selectedHeaderColor)
@@ -128,10 +129,19 @@ class DayCounterWidgetConfigureActivity : Activity() {
       selectedBackgroundColor,
       object : SinceOrUntilOptionsController.OnSelectedChangedListener {
         override fun onSelectedChanged(sinceSelected: Boolean) {
-          // TODO: Add functionality.
+          updateWidgetPreviewDayCounter(sinceSelected)
         }
       }
     )
+
+    datePicker.setOnDateChangedListener { _, year, monthOfYear, dayOfMonth ->
+      updateWidgetPreviewDayCounter(
+        dayOfMonth,
+        monthOfYear,
+        year,
+        sinceOrUntilOptionsController.sinceSelected
+      )
+    }
 
     addWidgetButton.setOnClickListener {
       widgetDataSaver.save(
@@ -153,12 +163,22 @@ class DayCounterWidgetConfigureActivity : Activity() {
     }
   }
 
-  private fun updateWidgetPreviewDayCounter() {
-    updateWidgetPreviewDayCounter(datePicker.dayOfMonth, datePicker.month, datePicker.year)
+  private fun updateWidgetPreviewDayCounter(sinceSelected: Boolean) {
+    updateWidgetPreviewDayCounter(
+      datePicker.dayOfMonth,
+      datePicker.month,
+      datePicker.year,
+      sinceSelected
+    )
   }
 
-  private fun updateWidgetPreviewDayCounter(dayOfMonth: Int, month: Int, year: Int) {
-    val dayCount = dayCount(dateMidnightUtcMillis(dayOfMonth, month, year))
+  private fun updateWidgetPreviewDayCounter(
+    dayOfMonth: Int,
+    month: Int,
+    year: Int,
+    sinceSelected: Boolean
+  ) {
+    val dayCount = dayCount(dateMidnightUtcMillis(dayOfMonth, month, year), sinceSelected)
     val resources = resources
     previewCounter.text = getFormattedDayCount(resources, dayCount)
     previewDays.text = getFormattedDays(resources, dayCount)
@@ -185,7 +205,7 @@ class DayCounterWidgetConfigureActivity : Activity() {
 
   override fun onRestoreInstanceState(savedInstanceState: Bundle) {
     super.onRestoreInstanceState(savedInstanceState)
-    updateWidgetPreviewDayCounter()
+    updateWidgetPreviewDayCounter(sinceOrUntilOptionsController.sinceSelected)
   }
 
   override fun onSaveInstanceState(outState: Bundle) {
