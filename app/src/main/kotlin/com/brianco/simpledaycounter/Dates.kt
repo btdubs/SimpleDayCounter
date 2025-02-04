@@ -13,13 +13,25 @@ internal fun daysSince(
   require(dateMidnightUtcMillis % 86_400_000L == 0L)
   val offsetMillis = currentTimeZone.getOffset(nowMillis)
   val todayMidnightUtcMillis = utcCalendar.apply {
-    timeInMillis = nowMillis - offsetMillis
+    timeInMillis = nowMillis + offsetMillis
     set(Calendar.HOUR_OF_DAY, 0)
     set(Calendar.MINUTE, 0)
     set(Calendar.SECOND, 0)
     set(Calendar.MILLISECOND, 0)
   }.timeInMillis
   return (todayMidnightUtcMillis - dateMidnightUtcMillis) / 86_400_000L
+}
+
+internal fun dateMidnightUtcMillis(dayOfMonth: Int, month: Int, year: Int): Long {
+  return utcCalendar.apply {
+    set(Calendar.DAY_OF_MONTH, dayOfMonth)
+    set(Calendar.MONTH, month)
+    set(Calendar.YEAR, year)
+    set(Calendar.HOUR_OF_DAY, 0)
+    set(Calendar.MINUTE, 0)
+    set(Calendar.SECOND, 0)
+    set(Calendar.MILLISECOND, 0)
+  }.timeInMillis
 }
 
 internal inline fun dayMonthYear(
@@ -35,16 +47,4 @@ internal inline fun dayMonthYear(
     utcCalendar.get(Calendar.MONTH),
     utcCalendar.get(Calendar.YEAR)
   )
-}
-
-internal fun dateMidnightUtcMillis(dayOfMonth: Int, month: Int, year: Int): Long {
-  return utcCalendar.apply {
-    set(Calendar.DAY_OF_MONTH, dayOfMonth)
-    set(Calendar.MONTH, month)
-    set(Calendar.YEAR, year)
-    set(Calendar.HOUR_OF_DAY, 0)
-    set(Calendar.MINUTE, 0)
-    set(Calendar.SECOND, 0)
-    set(Calendar.MILLISECOND, 0)
-  }.timeInMillis
 }
