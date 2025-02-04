@@ -1,7 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-  <style name="Theme.SimpleDayCounter" parent="Theme.Material3.DayNight.NoActionBar">
+  <style name="Theme.SimpleDayCounter" parent="Theme.SimpleDayCounterBase">
+    <item name="android:windowLightStatusBar">true</item>
+  </style>
+
+  <style name="Theme.SimpleDayCounterBase" parent="Theme.Material3.DayNight.NoActionBar">
     <item name="colorPrimary">@color/primary</item>
     <item name="colorAccent">@color/accent</item>
   </style>
