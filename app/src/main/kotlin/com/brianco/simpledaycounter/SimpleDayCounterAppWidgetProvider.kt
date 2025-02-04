@@ -1,8 +1,8 @@
 package com.brianco.simpledaycounter
 
-import android.annotation.SuppressLint
 import android.appwidget.AppWidgetManager
 import android.appwidget.AppWidgetProvider
+import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.content.res.Resources
@@ -58,10 +58,23 @@ internal fun getFormattedDays(resources: Resources, dayCount: Long): String {
 class SimpleDayCounterAppWidgetProvider : AppWidgetProvider() {
   private lateinit var widgetDataSaver: WidgetDataSaver
 
-  @SuppressLint("UnsafeProtectedBroadcastReceiver") // The super call checks the action.
   override fun onReceive(context: Context, intent: Intent) {
     val app = context.applicationContext as SimpleDayCounterApplication
     widgetDataSaver = app.widgetDataSaver
+    val action = intent.action
+    if (action == ACTION_MIDNIGHT_UPDATE ||
+      action == Intent.ACTION_TIME_CHANGED ||
+      action == Intent.ACTION_TIMEZONE_CHANGED) {
+      val appWidgetManager = AppWidgetManager.getInstance(context)
+      val appWidgetIds = appWidgetManager.getAppWidgetIds(
+        ComponentName(context, SimpleDayCounterAppWidgetProvider::class.java)
+      )
+      for (appWidgetId in appWidgetIds) {
+        updateAppWidget(context, appWidgetManager, appWidgetId, widgetDataSaver)
+      }
+      setMidnightAlarm(context)
+      return
+    }
     super.onReceive(context, intent)
   }
 
@@ -79,5 +92,13 @@ class SimpleDayCounterAppWidgetProvider : AppWidgetProvider() {
     for (appWidgetId in appWidgetIds) {
       widgetDataSaver.delete(appWidgetId)
     }
+  }
+
+  override fun onEnabled(context: Context) {
+    setMidnightAlarm(context)
+  }
+
+  override fun onDisabled(context: Context) {
+    cancelMidnightAlarm(context)
   }
 }
