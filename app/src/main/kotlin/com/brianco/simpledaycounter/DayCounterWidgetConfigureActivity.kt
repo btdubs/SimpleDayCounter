@@ -20,14 +20,17 @@ class DayCounterWidgetConfigureActivity : Activity() {
     "${DayCounterWidgetConfigureActivity::class.qualifiedName}.selectedHeaderColor"
   private val selectedBackgroundColorSavedStateKey =
     "${DayCounterWidgetConfigureActivity::class.qualifiedName}.selectedBackgroundColor"
+  private val sinceOrUntilSavedStateKey =
+    "${DayCounterWidgetConfigureActivity::class.qualifiedName}.sinceOrUntil"
   private lateinit var widgetDataSaver: WidgetDataSaver
   private lateinit var datePicker: DatePicker
   private lateinit var previewWidgetContainer: View
   private lateinit var previewLabel: TextView
   private lateinit var previewCounter: TextView
   private lateinit var previewDays: TextView
-  private var selectedHeaderColor: Int = 0
-  private var selectedBackgroundColor: Int = 0
+  private lateinit var sinceOrUntilOptionsController: SinceOrUntilOptionsController
+  private var selectedHeaderColor = 0
+  private var selectedBackgroundColor = 0
 
   public override fun onCreate(savedInstanceState: Bundle?) {
     val app = application as SimpleDayCounterApplication
@@ -39,9 +42,7 @@ class DayCounterWidgetConfigureActivity : Activity() {
     )
 
     setResult(RESULT_CANCELED)
-    if (appWidgetId == AppWidgetManager.INVALID_APPWIDGET_ID) {
-      return
-    }
+    check(appWidgetId != AppWidgetManager.INVALID_APPWIDGET_ID)
 
     setContentView(R.layout.activity_configuration)
     datePicker = findViewById(R.id.configure_date_picker)
@@ -49,6 +50,8 @@ class DayCounterWidgetConfigureActivity : Activity() {
     previewLabel = previewWidgetContainer.findViewById(R.id.widget_label)
     previewCounter = previewWidgetContainer.findViewById(R.id.widget_counter)
     previewDays = previewWidgetContainer.findViewById(R.id.widget_days)
+    val sinceOption = findViewById<TextView>(R.id.option_since)
+    val untilOption = findViewById<TextView>(R.id.option_until)
     val label = findViewById<EditText>(R.id.configure_label)
     val headerColorContainer = findViewById<ViewGroup>(R.id.header_color_circle_container)
     val backgroundColorContainer = findViewById<ViewGroup>(R.id.background_color_circle_container)
@@ -89,6 +92,7 @@ class DayCounterWidgetConfigureActivity : Activity() {
       }
     })
 
+    val sinceSelected: Boolean
     if (savedInstanceState != null) {
       // onRestoreInstanceState will set the previewCounter and previewDays texts after Android
       // restores the DatePicker state.
@@ -96,6 +100,7 @@ class DayCounterWidgetConfigureActivity : Activity() {
       // restores the label EditText's text.
       selectedHeaderColor = savedInstanceState.getInt(selectedHeaderColorSavedStateKey)
       selectedBackgroundColor = savedInstanceState.getInt(selectedBackgroundColorSavedStateKey)
+      sinceSelected = savedInstanceState.getBoolean(sinceOrUntilSavedStateKey)
     } else if (widgetDataSaver.isWidget(appWidgetId)) {
       dayMonthYear(widgetDataSaver.getDate(appWidgetId)) { dayOfMonth, month, year ->
         datePicker.updateDate(year, month, dayOfMonth)
@@ -105,12 +110,28 @@ class DayCounterWidgetConfigureActivity : Activity() {
       // The label EditText's TextWatcher sets the previewLabel TextView text.
       selectedHeaderColor = widgetDataSaver.getHeaderColor(appWidgetId)
       selectedBackgroundColor = widgetDataSaver.getBackgroundColor(appWidgetId)
+      sinceSelected = widgetDataSaver.getSinceOrUntil(appWidgetId)
     } else {
       selectedHeaderColor = getColor(headerColors[0])
       selectedBackgroundColor = getColor(backgroundColors[0])
+      sinceSelected = true
       updateWidgetPreviewDayCounter()
     }
-    updateWidgetPreviewColors(selectedHeaderColor, selectedBackgroundColor)
+
+    previewLabel.setBackgroundColor(selectedHeaderColor)
+    previewWidgetContainer.setBackgroundColor(selectedBackgroundColor)
+
+    sinceOrUntilOptionsController = SinceOrUntilOptionsController(
+      sinceOption,
+      untilOption,
+      sinceSelected,
+      selectedBackgroundColor,
+      object : SinceOrUntilOptionsController.OnSelectedChangedListener {
+        override fun onSelectedChanged(sinceSelected: Boolean) {
+          // TODO: Add functionality.
+        }
+      }
+    )
 
     addWidgetButton.setOnClickListener {
       widgetDataSaver.save(
@@ -118,7 +139,8 @@ class DayCounterWidgetConfigureActivity : Activity() {
         dateMidnightUtcMillis(datePicker.dayOfMonth, datePicker.month, datePicker.year),
         label.text.toString(),
         selectedHeaderColor,
-        selectedBackgroundColor
+        selectedBackgroundColor,
+        sinceOrUntilOptionsController.sinceSelected
       )
       updateAppWidget(
         this,
@@ -129,11 +151,6 @@ class DayCounterWidgetConfigureActivity : Activity() {
       setResult(RESULT_OK)
       finish()
     }
-  }
-
-  private fun updateWidgetPreviewColors(headerColor: Int, backgroundColor: Int) {
-    previewLabel.setBackgroundColor(headerColor)
-    previewWidgetContainer.setBackgroundColor(backgroundColor)
   }
 
   private fun updateWidgetPreviewDayCounter() {
@@ -159,7 +176,9 @@ class DayCounterWidgetConfigureActivity : Activity() {
       } else {
         selectedHeaderColor = color
       }
-      updateWidgetPreviewColors(selectedHeaderColor, selectedBackgroundColor)
+      previewLabel.setBackgroundColor(selectedHeaderColor)
+      previewWidgetContainer.setBackgroundColor(selectedBackgroundColor)
+      sinceOrUntilOptionsController.setSelectedColor(selectedBackgroundColor)
     }
     layout.addView(colorView)
   }
@@ -173,5 +192,6 @@ class DayCounterWidgetConfigureActivity : Activity() {
     super.onSaveInstanceState(outState)
     outState.putInt(selectedHeaderColorSavedStateKey, selectedHeaderColor)
     outState.putInt(selectedBackgroundColorSavedStateKey, selectedBackgroundColor)
+    outState.putBoolean(sinceOrUntilSavedStateKey, sinceOrUntilOptionsController.sinceSelected)
   }
 }
