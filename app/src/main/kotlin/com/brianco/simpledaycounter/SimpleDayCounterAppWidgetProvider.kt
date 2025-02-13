@@ -67,17 +67,15 @@ internal fun getFormattedDayCount(resources: Resources, dayCount: Long): String 
   return resources.getString(R.string.widget_count, dayCount)
 }
 
-internal fun getFormattedDays(resources: Resources, dayCount: Long): String {
+internal fun getFormattedDays(resources: Resources, dayCount: Long): CharSequence {
   var dayCountForFormatting = dayCount.coerceIn(
-    Integer.MIN_VALUE.toLong(), Integer.MAX_VALUE.toLong()
+    Integer.MIN_VALUE.toLong(),
+    Integer.MAX_VALUE.toLong()
   ).toInt()
   if (dayCountForFormatting == -1) {
     dayCountForFormatting = 1 // -1 day, not -1 days. Android plurals don't let us special-case -1.
   }
-  return resources.getQuantityString(
-    R.plurals.widget_days,
-    dayCountForFormatting
-  )
+  return resources.getQuantityText(R.plurals.widget_days, dayCountForFormatting)
 }
 
 private fun calendarIntent(
