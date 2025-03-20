@@ -33,7 +33,7 @@ class DayCounterWidgetConfigureActivity : Activity() {
   private var selectedHeaderColor = 0
   private var selectedBackgroundColor = 0
 
-  public override fun onCreate(savedInstanceState: Bundle?) {
+  override fun onCreate(savedInstanceState: Bundle?) {
     val app = application as SimpleDayCounterApplication
     widgetDataSaver = app.widgetDataSaver
     super.onCreate(savedInstanceState)
