@@ -1,6 +1,7 @@
 package com.brianco.simpledaycounter
 
 import android.content.SharedPreferences
+import androidx.core.content.edit
 
 internal class WidgetDataSaver(private val sharedPreferences: SharedPreferences) {
   fun save(
@@ -17,13 +18,13 @@ internal class WidgetDataSaver(private val sharedPreferences: SharedPreferences)
     val headerColorKey = "$appWidgetId-headerColor"
     val backgroundColorKey = "$appWidgetId-backgroundColor"
     val sinceOrUntilKey = "$appWidgetId-sinceOrUntil"
-    sharedPreferences.edit()
-      .putLong(dateKey, date)
-      .putString(labelKey, label)
-      .putInt(headerColorKey, headerColor)
-      .putInt(backgroundColorKey, backgroundColor)
-      .putBoolean(sinceOrUntilKey, sinceOrUntil)
-      .apply()
+    sharedPreferences.edit {
+      putLong(dateKey, date)
+        .putString(labelKey, label)
+        .putInt(headerColorKey, headerColor)
+        .putInt(backgroundColorKey, backgroundColor)
+        .putBoolean(sinceOrUntilKey, sinceOrUntil)
+    }
   }
 
   fun delete(appWidgetId: Int) {
@@ -32,13 +33,13 @@ internal class WidgetDataSaver(private val sharedPreferences: SharedPreferences)
     val headerColorKey = "$appWidgetId-headerColor"
     val backgroundColorKey = "$appWidgetId-backgroundColor"
     val sinceOrUntilKey = "$appWidgetId-sinceOrUntil"
-    sharedPreferences.edit()
-      .remove(dateKey)
-      .remove(labelKey)
-      .remove(headerColorKey)
-      .remove(backgroundColorKey)
-      .remove(sinceOrUntilKey)
-      .apply()
+    sharedPreferences.edit {
+      remove(dateKey)
+        .remove(labelKey)
+        .remove(headerColorKey)
+        .remove(backgroundColorKey)
+        .remove(sinceOrUntilKey)
+    }
   }
 
   fun isWidget(appWidgetId: Int): Boolean {
