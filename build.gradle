@@ -1,6 +1,6 @@
 buildscript {
   ext.versions = [
-      androidGradlePlugin: '8.9.2',
+      androidGradlePlugin: '8.10.0',
       androidx: [
           activity: '1.10.1',
           annotations: '1.9.1',
