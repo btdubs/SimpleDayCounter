@@ -2,7 +2,6 @@ package com.brianco.simpledaycounter
 
 import com.google.common.truth.Truth.assertThat
 import java.text.SimpleDateFormat
-import java.util.Calendar
 import java.util.Locale
 import java.util.TimeZone
 import org.junit.Assert.fail
@@ -149,19 +148,5 @@ class DatesTest {
       assertThat(month).isEqualTo(1)
       assertThat(year).isEqualTo(2025)
     }
-  }
-
-  private fun getTime(date: String): Long {
-    val format = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US).apply {
-      timeZone = TimeZone.getTimeZone("UTC")
-    }
-    format.parse(date)
-    return Calendar.getInstance(TimeZone.getTimeZone("UTC")).apply {
-      timeInMillis = format.parse(date)!!.time
-      set(Calendar.HOUR_OF_DAY, 0)
-      set(Calendar.MINUTE, 0)
-      set(Calendar.SECOND, 0)
-      set(Calendar.MILLISECOND, 0)
-    }.timeInMillis
   }
 }
