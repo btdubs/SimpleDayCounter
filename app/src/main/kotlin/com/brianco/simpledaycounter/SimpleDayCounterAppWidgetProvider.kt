@@ -31,11 +31,27 @@ internal fun updateAppWidget(
   val dayCount = dayCount(savedDate, sinceSelected, nowMillis, currentTimeZone)
 
   val resources = context.resources
-  views.setTextViewText(R.id.widget_label, saver.getLabel(appWidgetId))
-  views.setTextViewText(R.id.widget_counter, getFormattedDayCount(resources, dayCount))
-  views.setTextViewText(R.id.widget_days, getFormattedDays(resources, dayCount))
-  views.setInt(R.id.widget_label, "setBackgroundColor", saver.getHeaderColor(appWidgetId))
-  views.setInt(android.R.id.background, "setBackgroundColor", saver.getBackgroundColor(appWidgetId))
+  views.setTextViewText(
+    R.id.widget_label,
+    saver.getLabel(appWidgetId)
+  )
+  views.setTextViewText(
+    R.id.widget_counter,
+    getFormattedDayCount(resources, dayCount)
+  )
+  views.setTextViewText(
+    R.id.widget_days,
+    getFormattedDays(resources, dayCount)
+  )
+  views.setInt(
+    R.id.widget_label,
+    "setBackgroundColor",
+    saver.getHeaderColor(appWidgetId)
+  )
+  views.setInt(
+    android.R.id.background,
+    "setBackgroundColor", saver.getBackgroundColor(appWidgetId)
+  )
 
   val pendingIntent =
     PendingIntent.getActivity(
