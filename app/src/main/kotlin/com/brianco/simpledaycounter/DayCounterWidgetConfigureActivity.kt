@@ -85,11 +85,13 @@ class DayCounterWidgetConfigureActivity : Activity() {
 
     addWidgetButton.setText(if (isExistingWidget) R.string.update_widget else R.string.add_widget)
 
+    val plainTextInputFilter = arrayOf(PlainTextInputFilter())
+    label.filters = plainTextInputFilter
     label.addTextChangedListener(object : TextWatcher {
       override fun beforeTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {}
       override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {}
       override fun afterTextChanged(editable: Editable) {
-        previewLabel.text = editable.toString()
+        previewLabel.text = editable
       }
     })
 
