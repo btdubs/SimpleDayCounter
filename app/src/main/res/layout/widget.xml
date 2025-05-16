@@ -17,6 +17,13 @@
       android:gravity="center_horizontal"
       android:textColor="@color/widget_text_color" />
 
+  <ProgressBar
+      android:id="@+id/widget_counter_loading"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_centerInParent="true"
+      android:indeterminateTint="@color/widget_loading_color" />
+
   <TextView
       android:id="@+id/widget_counter"
       android:layout_width="wrap_content"
@@ -24,9 +31,9 @@
       android:layout_centerInParent="true"
       android:autoSizeTextType="uniform"
       android:gravity="center_horizontal"
-      android:text="@string/widget_counter_preview"
       android:textColor="@color/widget_text_color"
-      android:textSize="34sp" />
+      android:textSize="34sp"
+      android:visibility="invisible" />
 
   <TextView
       android:id="@+id/widget_days"
@@ -34,7 +41,6 @@
       android:layout_height="wrap_content"
       android:layout_below="@id/widget_counter"
       android:layout_centerHorizontal="true"
-      android:text="@string/widget_days_preview"
       android:textColor="@color/widget_text_color"
       android:textSize="16sp" />
 </RelativeLayout>
