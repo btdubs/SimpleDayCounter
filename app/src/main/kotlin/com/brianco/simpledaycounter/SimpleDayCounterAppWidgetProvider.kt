@@ -9,6 +9,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.res.Resources
 import android.provider.CalendarContract
+import android.view.View
 import android.widget.RemoteViews
 import java.util.TimeZone
 
@@ -34,6 +35,14 @@ internal fun updateAppWidget(
   views.setTextViewText(
     R.id.widget_label,
     saver.getLabel(appWidgetId)
+  )
+  views.setViewVisibility(
+    R.id.widget_counter_loading,
+    View.GONE
+  )
+  views.setViewVisibility(
+    R.id.widget_counter,
+    View.VISIBLE
   )
   views.setTextViewText(
     R.id.widget_counter,

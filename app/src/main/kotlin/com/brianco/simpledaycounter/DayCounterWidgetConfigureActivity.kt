@@ -27,6 +27,7 @@ class DayCounterWidgetConfigureActivity : Activity() {
   private lateinit var datePicker: DatePicker
   private lateinit var previewWidgetContainer: View
   private lateinit var previewLabel: TextView
+  private lateinit var previewCounterLoading: View
   private lateinit var previewCounter: TextView
   private lateinit var previewDays: TextView
   private lateinit var sinceOrUntilOptionsController: SinceOrUntilOptionsController
@@ -49,6 +50,7 @@ class DayCounterWidgetConfigureActivity : Activity() {
     datePicker = findViewById(R.id.configure_date_picker)
     previewWidgetContainer = findViewById(R.id.widget_preview)
     previewLabel = previewWidgetContainer.findViewById(R.id.widget_label)
+    previewCounterLoading = previewWidgetContainer.findViewById(R.id.widget_counter_loading)
     previewCounter = previewWidgetContainer.findViewById(R.id.widget_counter)
     previewDays = previewWidgetContainer.findViewById(R.id.widget_days)
     val sinceOption = findViewById<TextView>(R.id.option_since)
@@ -57,6 +59,9 @@ class DayCounterWidgetConfigureActivity : Activity() {
     val headerColorContainer = findViewById<ViewGroup>(R.id.header_color_circle_container)
     val backgroundColorContainer = findViewById<ViewGroup>(R.id.background_color_circle_container)
     val addWidgetButton = findViewById<Button>(R.id.configure_add)
+
+    previewCounterLoading.visibility = View.GONE
+    previewCounter.visibility = View.VISIBLE
 
     val isExistingWidget = widgetDataSaver.isWidget(appWidgetId)
 
