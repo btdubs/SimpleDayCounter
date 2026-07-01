@@ -47,30 +47,23 @@ internal class WidgetDataSaver(private val sharedPreferences: SharedPreferences)
   }
 
   fun getDate(appWidgetId: Int): Long {
-    val date = sharedPreferences.getLong(encodeDateKey(appWidgetId), -1L)
-    check(date != -1L)
-    return date
+    return getDate(encodeDateKey(appWidgetId))
   }
 
   fun getLabel(appWidgetId: Int): String {
-    val label = sharedPreferences.getString(encodeLabelKey(appWidgetId), null)
-    checkNotNull(label)
-    return label
+    return getLabel(encodeLabelKey(appWidgetId))
   }
 
   fun getHeaderColor(appWidgetId: Int): Int {
-    val headerColor = sharedPreferences.getInt(encodeHeaderColorKey(appWidgetId), 0)
-    return headerColor
+    return getHeaderColor(encodeHeaderColorKey(appWidgetId))
   }
 
   fun getBackgroundColor(appWidgetId: Int): Int {
-    val backgroundColor = sharedPreferences.getInt(encodeBackgroundColorKey(appWidgetId), 0)
-    return backgroundColor
+    return getBackgroundColor(encodeBackgroundColorKey(appWidgetId))
   }
 
   fun getSinceOrUntil(appWidgetId: Int): Boolean {
-    val sinceOrUntil = sharedPreferences.getBoolean(encodeSinceOrUntilKey(appWidgetId), true)
-    return sinceOrUntil
+    return getSinceOrUntil(encodeSinceOrUntilKey(appWidgetId))
   }
 
   fun restore(oldAppWidgetIds: IntArray, newAppWidgetIds: IntArray) {
@@ -92,22 +85,11 @@ internal class WidgetDataSaver(private val sharedPreferences: SharedPreferences)
         val backgroundColorKey = encodeBackgroundColorKey(oldAppWidgetId)
         val sinceOrUntilKey = encodeSinceOrUntilKey(oldAppWidgetId)
 
-        val date = sharedPreferences.getLong(dateKey, -1L)
-        check(date != -1L)
-        dates += date
-
-        val label = sharedPreferences.getString(labelKey, null)
-        checkNotNull(label)
-        labels += label
-
-        val headerColor = sharedPreferences.getInt(headerColorKey, 0)
-        headerColors += headerColor
-
-        val backgroundColor = sharedPreferences.getInt(backgroundColorKey, 0)
-        backgroundColors += backgroundColor
-
-        val sinceOrUntil = sharedPreferences.getBoolean(sinceOrUntilKey, true)
-        sinceOrUntils += sinceOrUntil
+        dates += getDate(dateKey)
+        labels += getLabel(labelKey)
+        headerColors += getHeaderColor(headerColorKey)
+        backgroundColors += getBackgroundColor(backgroundColorKey)
+        sinceOrUntils += getSinceOrUntil(sinceOrUntilKey)
 
         remove(dateKey)
         remove(labelKey)
@@ -132,6 +114,36 @@ internal class WidgetDataSaver(private val sharedPreferences: SharedPreferences)
         putBoolean(sinceOrUntilKey, sinceOrUntils[i])
       }
     }
+  }
+
+  private fun getDate(dateKey: String): Long {
+    // Fall back to start of the epoch when a user manually mangles his saved data.
+    val date = sharedPreferences.getLong(dateKey, 0L)
+    return date
+  }
+
+  private fun getLabel(labelKey: String): String {
+    // Fall back to the empty string when a user manually mangles his saved data.
+    val label = sharedPreferences.getString(labelKey, "")
+    return label ?: ""
+  }
+
+  private fun getHeaderColor(headerColorKey: String): Int {
+    // Fall back to transparent when a user manually mangles his saved data.
+    val headerColor = sharedPreferences.getInt(headerColorKey, 0)
+    return headerColor
+  }
+
+  private fun getBackgroundColor(backgroundColorKey: String): Int {
+    // Fall back to transparent when a user manually mangles his saved data.
+    val backgroundColor = sharedPreferences.getInt(backgroundColorKey, 0)
+    return backgroundColor
+  }
+
+  private fun getSinceOrUntil(sinceOrUntilKey: String): Boolean {
+    // Fall back to true when a user manually mangles his saved data.
+    val sinceOrUntil = sharedPreferences.getBoolean(sinceOrUntilKey, true)
+    return sinceOrUntil
   }
 
   private fun encodeDateKey(appWidgetId: Int): String {
