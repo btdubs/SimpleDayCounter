@@ -13,7 +13,7 @@ def versionBuild = 0
 android {
   namespace 'com.brianco.simpledaycounter'
 
-  compileSdkVersion versions.compileSdk
+  compileSdk = versions.compileSdk
 
   defaultConfig {
     applicationId namespace
