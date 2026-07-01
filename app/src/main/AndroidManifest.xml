@@ -31,6 +31,13 @@
       </intent-filter>
     </activity>
 
+    <activity
+        android:name=".FallbackInfoActivity"
+        android:excludeFromRecents="true"
+        android:exported="false"
+        android:theme="@style/Theme.AlmostNoDisplay">
+    </activity>
+
     <receiver
         android:name=".WidgetPinnedReceiver"
         android:exported="false" />

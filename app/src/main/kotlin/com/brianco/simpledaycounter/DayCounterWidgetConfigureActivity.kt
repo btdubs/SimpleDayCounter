@@ -2,6 +2,7 @@ package com.brianco.simpledaycounter
 
 import android.app.Activity
 import android.appwidget.AppWidgetManager
+import android.content.Intent
 import android.graphics.drawable.ShapeDrawable
 import android.graphics.drawable.shapes.OvalShape
 import android.os.Bundle
@@ -38,13 +39,30 @@ class DayCounterWidgetConfigureActivity : Activity() {
     val app = application as SimpleDayCounterApplication
     widgetDataSaver = app.widgetDataSaver
     super.onCreate(savedInstanceState)
+
+    val extras = intent.extras
+    if (extras == null) {
+      // This happened on a 2025 Moto G running SDK 36.
+      // There is nothing to do without the appwidget id from the intent extras, though.
+      finish()
+      return
+    }
     val appWidgetId = intent.getIntExtra(
       AppWidgetManager.EXTRA_APPWIDGET_ID,
       AppWidgetManager.INVALID_APPWIDGET_ID
     )
-
-    setResult(RESULT_CANCELED)
-    check(appWidgetId != AppWidgetManager.INVALID_APPWIDGET_ID)
+    if (appWidgetId == AppWidgetManager.INVALID_APPWIDGET_ID) {
+      // This happens in production on some Chinese devices.
+      // When does this happen? How do we get the appWidgetId? What behavior does this now have?
+      // Hopefully, these devices try launching the configuration activity again.
+      finish()
+      return
+    }
+    val resultValue = Intent().putExtra(
+      AppWidgetManager.EXTRA_APPWIDGET_ID,
+      appWidgetId
+    )
+    setResult(RESULT_CANCELED, resultValue)
 
     setContentView(R.layout.activity_configuration)
     datePicker = findViewById(R.id.configure_date_picker)
@@ -170,7 +188,7 @@ class DayCounterWidgetConfigureActivity : Activity() {
         appWidgetId,
         widgetDataSaver
       )
-      setResult(RESULT_OK)
+      setResult(RESULT_OK, resultValue)
       finish()
     }
   }
