@@ -162,4 +162,8 @@ class SimpleDayCounterAppWidgetProvider : AppWidgetProvider() {
   override fun onDisabled(context: Context) {
     cancelMidnightAlarm(context)
   }
+
+  override fun onRestored(context: Context, oldWidgetIds: IntArray, newWidgetIds: IntArray) {
+    widgetDataSaver.restore(oldWidgetIds, newWidgetIds)
+  }
 }
