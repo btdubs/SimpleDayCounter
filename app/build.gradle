@@ -1,11 +1,14 @@
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+
+plugins {
+  id 'com.android.application'
+}
+
 // Manifest version information!
 def versionMajor = 1
 def versionMinor = 1
 def versionPatch = 0
 def versionBuild = 0
-
-apply plugin: 'com.android.application'
-apply plugin: 'kotlin-android'
 
 android {
   namespace 'com.brianco.simpledaycounter'
@@ -23,12 +26,14 @@ android {
   }
 
   compileOptions {
-    sourceCompatibility JavaVersion.VERSION_1_8
-    targetCompatibility JavaVersion.VERSION_1_8
+    sourceCompatibility JavaVersion.VERSION_11
+    targetCompatibility JavaVersion.VERSION_11
   }
 
-  kotlinOptions {
-    jvmTarget = '1.8'
+  kotlin {
+    compilerOptions {
+      jvmTarget = JvmTarget.JVM_11
+    }
   }
 
   lint {
@@ -43,45 +48,30 @@ android {
   }
 
   buildTypes {
-    debug {
-      debuggable true
-    }
-    release {
-      // Enables code shrinking, obfuscation, and optimization for only
-      // your project's release build type. Make sure to use a build
-      // variant with `debuggable false`.
-      minifyEnabled true
-
-      // Enables resource shrinking, which is performed by the
-      // Android Gradle plugin.
-      shrinkResources true
-
-      // Includes the default ProGuard rules files that are packaged with
-      // the Android Gradle plugin. To learn more, go to the section about
-      // R8 configuration files.
-      proguardFiles getDefaultProguardFile(
-          'proguard-android-optimize.txt'),
-          'proguard-rules.pro'
-    }
   }
 
   productFlavors {
     flavorDimensions = ['environment']
 
     internal {
+      def gitCommitSha = 'git rev-parse --short HEAD'.execute().text.trim()
       applicationIdSuffix '.internal'
-      versionNameSuffix '-internal'
+      versionNameSuffix "-internal-${gitCommitSha}"
     }
 
     production {
     }
   }
 
-  applicationVariants.configureEach { variant ->
-    variant.outputs.configureEach { output ->
-      outputFileName = "Simple Day Counter ${variant.versionCode}.apk"
-      if (variant.flavorName == 'internal') {
-        outputFileName = 'Internal ' + outputFileName
+  androidComponents {
+    onVariants(selector().all()) { variant ->
+      variant.outputs.forEach { output ->
+        def versionCode = output.versionCode.get()
+        def outputFileName = "Simple Day Counter ${versionCode}.apk"
+        if (variant.flavorName == 'internal') {
+          outputFileName = 'Internal ' + outputFileName
+        }
+        output.outputFileName.set(outputFileName)
       }
     }
   }
