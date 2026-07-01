@@ -124,8 +124,8 @@ internal class WidgetDataSaver(private val sharedPreferences: SharedPreferences)
 
   private fun getLabel(labelKey: String): String {
     // Fall back to the empty string when a user manually mangles his saved data.
-    val label = sharedPreferences.getString(labelKey, "")
-    return label ?: ""
+    val label = sharedPreferences.getString(labelKey, "")!!
+    return label
   }
 
   private fun getHeaderColor(headerColorKey: String): Int {
