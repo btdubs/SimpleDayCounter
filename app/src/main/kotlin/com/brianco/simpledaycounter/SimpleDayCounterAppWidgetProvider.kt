@@ -62,10 +62,11 @@ internal fun updateAppWidget(
     "setBackgroundColor", saver.getBackgroundColor(appWidgetId)
   )
 
+  val requestCode = appWidgetId
   val pendingIntent =
     PendingIntent.getActivity(
       context,
-      0,
+      requestCode,
       calendarIntent(savedDate, nowMillis, currentTimeZone),
       PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
     )
