@@ -12,7 +12,7 @@ internal class WidgetDataSaver(private val sharedPreferences: SharedPreferences)
     backgroundColor: Int,
     sinceOrUntil: Boolean
   ) {
-    require(date >= 0L)
+    requireMidnightUtcDate(date)
     val dateKey = encodeDateKey(appWidgetId)
     val labelKey = encodeLabelKey(appWidgetId)
     val headerColorKey = encodeHeaderColorKey(appWidgetId)

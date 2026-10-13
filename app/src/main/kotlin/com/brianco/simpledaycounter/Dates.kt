@@ -10,7 +10,7 @@ internal fun daysSince(
   nowMillis: Long,
   currentTimeZone: TimeZone
 ): Long {
-  require(dateMidnightUtcMillis % 86_400_000L == 0L)
+  requireMidnightUtcDate(dateMidnightUtcMillis)
   val offsetMillis = currentTimeZone.getOffset(nowMillis)
   val todayMidnightUtcMillis = utcCalendar.apply {
     timeInMillis = nowMillis + offsetMillis
@@ -38,7 +38,7 @@ internal inline fun dayMonthYear(
   dateMidnightUtcMillis: Long,
   result: (dayOfMonth: Int, month: Int, year: Int) -> Unit,
 ) {
-  require(dateMidnightUtcMillis % 86_400_000L == 0L)
+  requireMidnightUtcDate(dateMidnightUtcMillis)
   utcCalendar.apply {
     timeInMillis = dateMidnightUtcMillis
   }
@@ -47,4 +47,10 @@ internal inline fun dayMonthYear(
     utcCalendar.get(Calendar.MONTH),
     utcCalendar.get(Calendar.YEAR)
   )
+}
+
+internal fun requireMidnightUtcDate(date: Long) {
+  require(date % 86_400_000L == 0L) {
+    "$date was not a midnight UTC date."
+  }
 }
