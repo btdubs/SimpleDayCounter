@@ -11,6 +11,8 @@ import android.content.res.Resources
 import android.provider.CalendarContract
 import android.view.View
 import android.widget.RemoteViews
+import java.time.Instant
+import java.time.ZoneOffset
 import java.util.TimeZone
 
 internal fun updateAppWidget(
@@ -67,7 +69,7 @@ internal fun updateAppWidget(
     PendingIntent.getActivity(
       context,
       requestCode,
-      calendarIntent(savedDate, nowMillis, currentTimeZone),
+      calendarIntent(savedDate, currentTimeZone),
       PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
     )
   views.setOnClickPendingIntent(android.R.id.background, pendingIntent)
@@ -106,12 +108,19 @@ internal fun getFormattedDays(resources: Resources, dayCount: Long): CharSequenc
 
 private fun calendarIntent(
   dateMidnightUtcMillis: Long,
-  nowMillis: Long,
   currentTimeZone: TimeZone
 ): Intent {
+  val currentZoneId = currentTimeZone.toZoneId()
+
   // The calendar app will add the time zone offset to go to the day we selected.
-  val offsetMillis = currentTimeZone.getOffset(nowMillis)
-  val startMillis = dateMidnightUtcMillis - offsetMillis
+  val selectedDate = Instant.ofEpochMilli(dateMidnightUtcMillis)
+    .atZone(ZoneOffset.UTC)
+    .toLocalDate()
+  val startMillis = selectedDate
+    .atStartOfDay(currentZoneId)
+    .toInstant()
+    .toEpochMilli()
+
   val builder = CalendarContract.CONTENT_URI.buildUpon().appendPath("time")
   ContentUris.appendId(builder, startMillis)
   return Intent(Intent.ACTION_VIEW, builder.build())
