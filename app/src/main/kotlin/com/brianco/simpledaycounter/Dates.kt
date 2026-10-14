@@ -1,51 +1,47 @@
 package com.brianco.simpledaycounter
 
-import java.util.Calendar
-import java.util.TimeZone
-
-private val utcCalendar = Calendar.getInstance(TimeZone.getTimeZone("UTC"))
+import java.time.Instant
+import java.time.LocalDate
+import java.time.ZoneId
+import java.time.ZoneOffset
+import java.time.temporal.ChronoUnit
 
 internal fun daysSince(
   dateMidnightUtcMillis: Long,
   nowMillis: Long,
-  currentTimeZone: TimeZone
+  currentZoneId: ZoneId
 ): Long {
   requireMidnightUtcDate(dateMidnightUtcMillis)
-  val offsetMillis = currentTimeZone.getOffset(nowMillis)
-  val todayMidnightUtcMillis = utcCalendar.apply {
-    timeInMillis = nowMillis + offsetMillis
-    set(Calendar.HOUR_OF_DAY, 0)
-    set(Calendar.MINUTE, 0)
-    set(Calendar.SECOND, 0)
-    set(Calendar.MILLISECOND, 0)
-  }.timeInMillis
-  return (todayMidnightUtcMillis - dateMidnightUtcMillis) / 86_400_000L
+  val selectedDate = Instant.ofEpochMilli(dateMidnightUtcMillis)
+    .atZone(ZoneOffset.UTC)
+    .toLocalDate()
+  val today = Instant.ofEpochMilli(nowMillis)
+    .atZone(currentZoneId)
+    .toLocalDate()
+  return ChronoUnit.DAYS.between(selectedDate, today)
 }
 
+// month is 0-indexed. Android's DatePicker 0-indexes the months.
 internal fun dateMidnightUtcMillis(dayOfMonth: Int, month: Int, year: Int): Long {
-  return utcCalendar.apply {
-    set(Calendar.DAY_OF_MONTH, dayOfMonth)
-    set(Calendar.MONTH, month)
-    set(Calendar.YEAR, year)
-    set(Calendar.HOUR_OF_DAY, 0)
-    set(Calendar.MINUTE, 0)
-    set(Calendar.SECOND, 0)
-    set(Calendar.MILLISECOND, 0)
-  }.timeInMillis
+  return LocalDate.of(year, month + 1, dayOfMonth)
+    .atStartOfDay(ZoneOffset.UTC)
+    .toInstant()
+    .toEpochMilli()
 }
 
+// month is 0-indexed. Android's DatePicker 0-indexes the months.
 internal inline fun dayMonthYear(
   dateMidnightUtcMillis: Long,
   result: (dayOfMonth: Int, month: Int, year: Int) -> Unit,
 ) {
   requireMidnightUtcDate(dateMidnightUtcMillis)
-  utcCalendar.apply {
-    timeInMillis = dateMidnightUtcMillis
-  }
-  result(
-    utcCalendar.get(Calendar.DAY_OF_MONTH),
-    utcCalendar.get(Calendar.MONTH),
-    utcCalendar.get(Calendar.YEAR)
+  val date = Instant.ofEpochMilli(dateMidnightUtcMillis)
+    .atZone(ZoneOffset.UTC)
+    .toLocalDate()
+  return result(
+    date.dayOfMonth,
+    date.monthValue - 1,
+    date.year
   )
 }
 

@@ -12,8 +12,8 @@ import android.provider.CalendarContract
 import android.view.View
 import android.widget.RemoteViews
 import java.time.Instant
+import java.time.ZoneId
 import java.time.ZoneOffset
-import java.util.TimeZone
 
 internal fun updateAppWidget(
   context: Context,
@@ -30,8 +30,8 @@ internal fun updateAppWidget(
   val savedDate = saver.getDate(appWidgetId)
   val sinceSelected = saver.getSinceOrUntil(appWidgetId)
   val nowMillis = System.currentTimeMillis()
-  val currentTimeZone = TimeZone.getDefault()
-  val dayCount = dayCount(savedDate, sinceSelected, nowMillis, currentTimeZone)
+  val currentZoneId = ZoneId.systemDefault()
+  val dayCount = dayCount(savedDate, sinceSelected, nowMillis, currentZoneId)
 
   val resources = context.resources
   views.setTextViewText(
@@ -69,7 +69,7 @@ internal fun updateAppWidget(
     PendingIntent.getActivity(
       context,
       requestCode,
-      calendarIntent(savedDate, currentTimeZone),
+      calendarIntent(savedDate, currentZoneId),
       PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
     )
   views.setOnClickPendingIntent(android.R.id.background, pendingIntent)
@@ -81,9 +81,9 @@ internal fun dayCount(
   savedDate: Long,
   sinceSelected: Boolean,
   nowMillis: Long,
-  currentTimeZone: TimeZone
+  currentZoneId: ZoneId
 ): Long {
-  val daysSince = daysSince(savedDate, nowMillis, currentTimeZone)
+  val daysSince = daysSince(savedDate, nowMillis, currentZoneId)
   return if (sinceSelected) {
     daysSince + 1
   } else {
@@ -108,10 +108,8 @@ internal fun getFormattedDays(resources: Resources, dayCount: Long): CharSequenc
 
 private fun calendarIntent(
   dateMidnightUtcMillis: Long,
-  currentTimeZone: TimeZone
+  currentZoneId: ZoneId
 ): Intent {
-  val currentZoneId = currentTimeZone.toZoneId()
-
   // The calendar app will add the time zone offset to go to the day we selected.
   val selectedDate = Instant.ofEpochMilli(dateMidnightUtcMillis)
     .atZone(ZoneOffset.UTC)
