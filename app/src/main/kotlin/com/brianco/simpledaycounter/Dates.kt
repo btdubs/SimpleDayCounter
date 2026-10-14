@@ -46,7 +46,11 @@ internal inline fun dayMonthYear(
 }
 
 internal fun requireMidnightUtcDate(date: Long) {
-  require(date % 86_400_000L == 0L) {
+  require(isMidnightUtcDate(date)) {
     "$date was not a midnight UTC date."
   }
+}
+
+internal fun isMidnightUtcDate(date: Long): Boolean {
+  return date % 86_400_000L == 0L
 }

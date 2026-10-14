@@ -117,8 +117,16 @@ internal class WidgetDataSaver(private val sharedPreferences: SharedPreferences)
   }
 
   private fun getDate(dateKey: String): Long {
-    // Fall back to start of the epoch when a user manually mangles his saved data.
-    val date = sharedPreferences.getLong(dateKey, 0L)
+    val date = try {
+      sharedPreferences.getLong(dateKey, 0L)
+    } catch (_: ClassCastException) {
+      // Fall back to start of the epoch when a user manually mangles his saved data.
+      0L
+    }
+    if (!isMidnightUtcDate(date)) {
+      // Fall back to start of the epoch when a user manually mangles his saved data.
+      return 0L
+    }
     return date
   }
 
